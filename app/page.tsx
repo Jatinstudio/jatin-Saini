@@ -8,10 +8,13 @@ import { PomodoroTimer } from "@/components/ecrackerian/pomodoro-timer"
 import { TaskTracker } from "@/components/ecrackerian/task-tracker"
 import { TopperSecrets } from "@/components/ecrackerian/topper-secrets"
 import { CommunityChat } from "@/components/ecrackerian/community-chat"
+import { ExamSuggestions } from "@/components/ecrackerian/exam-suggestions"
 import { TrendingUp, Target, Clock, Zap } from "lucide-react"
 
 export default function EcrackerianDashboard() {
   const [isChatOpen, setIsChatOpen] = useState(false)
+  // This would typically come from user profile/auth context
+  const userExam = "JEE Advanced" // Can be: JEE, NEET, UPSC, CAT, GATE
 
   return (
     <div className="min-h-screen bg-background">
