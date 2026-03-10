@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import {
   Zap, User, Mail, Phone, MapPin, Calendar, GraduationCap, Target, Flame,
   Clock, Trophy, Medal, Award, Edit2, Camera, Settings, Bell, Shield,
-  ChevronRight, BookOpen, TrendingUp, Star, ExternalLink, LogOut
+  ChevronRight, BookOpen, TrendingUp, Star, ExternalLink, LogOut, X, Save
 } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -15,6 +15,22 @@ import { Progress } from "@/components/ui/progress"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Switch } from "@/components/ui/switch"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 const achievements = [
   { id: 1, name: "7-Day Streak", icon: Flame, earned: true, date: "Dec 2024" },
@@ -40,9 +56,10 @@ const savedResources = [
 ]
 
 export default function ProfilePage() {
-  const [isEditing, setIsEditing] = useState(false)
-
-  const user = {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  
+  const [user, setUser] = useState({
     name: "Aryan Kumar",
     email: "aryan@example.com",
     phone: "+91 98765 43210",
@@ -56,6 +73,44 @@ export default function ProfilePage() {
     streak: 14,
     totalHours: 456,
     completedGoals: 89,
+  })
+
+  const [editForm, setEditForm] = useState({
+    name: user.name,
+    email: user.email,
+    phone: user.phone,
+    location: user.location,
+    exam: user.exam,
+    targetYear: user.targetYear,
+  })
+
+  const handleOpenEditModal = () => {
+    setEditForm({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      location: user.location,
+      exam: user.exam,
+      targetYear: user.targetYear,
+    })
+    setIsEditModalOpen(true)
+  }
+
+  const handleSaveProfile = async () => {
+    setIsSaving(true)
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    setUser(prev => ({
+      ...prev,
+      name: editForm.name,
+      email: editForm.email,
+      phone: editForm.phone,
+      location: editForm.location,
+      exam: editForm.exam,
+      targetYear: editForm.targetYear,
+    }))
+    setIsSaving(false)
+    setIsEditModalOpen(false)
   }
 
   return (
@@ -137,7 +192,7 @@ export default function ProfilePage() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" onClick={() => setIsEditing(!isEditing)}>
+                  <Button variant="outline" onClick={handleOpenEditModal}>
                     <Edit2 className="h-4 w-4 mr-2" /> Edit Profile
                   </Button>
                   <Button variant="outline" size="icon">
@@ -365,6 +420,147 @@ export default function ProfilePage() {
           </motion.div>
         </div>
       </main>
+
+      {/* Edit Profile Modal */}
+      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+        <DialogContent className="bg-card border-border max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="text-foreground text-xl">Edit Profile</DialogTitle>
+            <DialogDescription className="text-muted-foreground">
+              Update your personal information and preferences
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 py-4">
+            {/* Name */}
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-foreground">Full Name</Label>
+              <div className="relative">
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="name"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
+                  className="pl-10 bg-secondary border-border focus:border-primary"
+                  placeholder="Your name"
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-foreground">Email Address</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  value={editForm.email}
+                  onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
+                  className="pl-10 bg-secondary border-border focus:border-primary"
+                  placeholder="your@email.com"
+                />
+              </div>
+            </div>
+
+            {/* Phone */}
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-foreground">Phone Number</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="phone"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                  className="pl-10 bg-secondary border-border focus:border-primary"
+                  placeholder="+91 12345 67890"
+                />
+              </div>
+            </div>
+
+            {/* Location */}
+            <div className="space-y-2">
+              <Label htmlFor="location" className="text-foreground">Location</Label>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="location"
+                  value={editForm.location}
+                  onChange={(e) => setEditForm({ ...editForm, location: e.target.value })}
+                  className="pl-10 bg-secondary border-border focus:border-primary"
+                  placeholder="City, Country"
+                />
+              </div>
+            </div>
+
+            {/* Exam Selection */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-foreground">Target Exam</Label>
+                <Select 
+                  value={editForm.exam} 
+                  onValueChange={(value) => setEditForm({ ...editForm, exam: value })}
+                >
+                  <SelectTrigger className="bg-secondary border-border">
+                    <SelectValue placeholder="Select exam" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="JEE Mains">JEE Mains</SelectItem>
+                    <SelectItem value="JEE Advanced">JEE Advanced</SelectItem>
+                    <SelectItem value="NEET">NEET</SelectItem>
+                    <SelectItem value="UPSC">UPSC</SelectItem>
+                    <SelectItem value="CAT">CAT</SelectItem>
+                    <SelectItem value="GATE">GATE</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-foreground">Target Year</Label>
+                <Select 
+                  value={editForm.targetYear} 
+                  onValueChange={(value) => setEditForm({ ...editForm, targetYear: value })}
+                >
+                  <SelectTrigger className="bg-secondary border-border">
+                    <SelectValue placeholder="Select year" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="2025">2025</SelectItem>
+                    <SelectItem value="2026">2026</SelectItem>
+                    <SelectItem value="2027">2027</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3 pt-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setIsEditModalOpen(false)}
+              className="border-border"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleSaveProfile}
+              disabled={isSaving}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              {isSaving ? (
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                  className="h-4 w-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full mr-2"
+                />
+              ) : (
+                <Save className="h-4 w-4 mr-2" />
+              )}
+              {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

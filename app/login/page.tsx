@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+  const [socialLoading, setSocialLoading] = useState<"google" | "github" | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -20,6 +21,15 @@ export default function LoginPage() {
     // Simulate login
     await new Promise(resolve => setTimeout(resolve, 1500))
     setIsLoading(false)
+    window.location.href = "/"
+  }
+
+  const handleSocialLogin = async (provider: "google" | "github") => {
+    setSocialLoading(provider)
+    // Simulate OAuth flow
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    setSocialLoading(null)
+    // Redirect to dashboard after successful login
     window.location.href = "/"
   }
 
@@ -162,13 +172,43 @@ export default function LoginPage() {
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="h-12 border-border hover:bg-secondary">
-                  <Chrome className="h-5 w-5 mr-2" />
-                  Google
+                <Button 
+                  variant="outline" 
+                  className="h-12 border-border hover:bg-secondary"
+                  onClick={() => handleSocialLogin("google")}
+                  disabled={socialLoading !== null}
+                >
+                  {socialLoading === "google" ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="h-5 w-5 border-2 border-muted-foreground/30 border-t-foreground rounded-full"
+                    />
+                  ) : (
+                    <>
+                      <Chrome className="h-5 w-5 mr-2" />
+                      Google
+                    </>
+                  )}
                 </Button>
-                <Button variant="outline" className="h-12 border-border hover:bg-secondary">
-                  <Github className="h-5 w-5 mr-2" />
-                  GitHub
+                <Button 
+                  variant="outline" 
+                  className="h-12 border-border hover:bg-secondary"
+                  onClick={() => handleSocialLogin("github")}
+                  disabled={socialLoading !== null}
+                >
+                  {socialLoading === "github" ? (
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="h-5 w-5 border-2 border-muted-foreground/30 border-t-foreground rounded-full"
+                    />
+                  ) : (
+                    <>
+                      <Github className="h-5 w-5 mr-2" />
+                      GitHub
+                    </>
+                  )}
                 </Button>
               </div>
 
